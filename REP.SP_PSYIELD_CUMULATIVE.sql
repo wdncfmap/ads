@@ -52,7 +52,7 @@ BEGIN_PROC
 		      if pPeriodType='Week' then 
 		        select DATE(D.PERIOD_START_DATE_TIME), DATE(D.PERIOD_END_DATE_TIME)
 		                INTO pPeriodStart,pPeriodEnd
-		                from ADS.VIEW_DIM_DATE_DAY D
+		                from ADS.VIEW_DIM_DATE D
 						JOIN ADS.VIEW_DIM_SITE S ON D.SITE_KEY = S.SITE_KEY
 		                where D.PERIOD_START_DATE_TIME >= pPeriodStart
 		                      and D.PERIOD_END_DATE_TIME <= pPeriodEnd
@@ -62,7 +62,7 @@ BEGIN_PROC
 		      elsif pPeriodType='Quarter'
 		        then select DATE(D.PERIOD_START_DATE_TIME), DATE(D.PERIOD_END_DATE_TIME)
 		                INTO pPeriodStart,pPeriodEnd
-		                from ADS.VIEW_DIM_DATE_DAY D
+		                from ADS.VIEW_DIM_DATE D
 						JOIN ADS.VIEW_DIM_SITE S ON D.SITE_KEY = S.SITE_KEY
 		                where D.PERIOD_START_DATE_TIME >= pPeriodStart
 		                      and D.PERIOD_END_DATE_TIME <= pPeriodEnd

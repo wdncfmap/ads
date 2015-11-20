@@ -17,6 +17,7 @@ def run():
     server = 'ADSFRE'
     db = 'MHO_ASIA_BI_DEV'
     schema = 'REP'
+    schHrs = '7'
 
     conn_factory = DBConnFactory()
     conn = conn_factory.get_connection(server, db)
@@ -38,6 +39,28 @@ def run():
     sp_replace = 'SP_TMP_TABLE_REPLACE'
     step = 1;
     t_begin = time.time()
+
+    print "Step 0. Get table BI_CALENDAR_TMP"
+    t0 = time.time()
+    print '-----Started:', time.strftime('%H:%M:%S')
+    sql_sp = "{call " + schema + ".SP_CALENDAR_TBL_BATCH" + "(" + schHrs + ")};"
+    # print sql_sp
+    cursor.execute(sql_sp)
+    t1 = time.time()
+    print '-----Finished:', time.strftime('%H:%M:%S')
+    print 'Time used: ', t1 - t0
+    step += 1
+    print "Step 0. Replace table BI_CALENDAR_TMP to BI_CALENDAR"
+    t0 = time.time()
+    print '-----Started:', time.strftime('%H:%M:%S')
+    sql_sp = "{call " + schema + "." + sp_replace + "('BI_CALENDAR_TMP', 'BI_CALENDAR','" + schema + "','" + schema + "')};"
+    # print sql_sp
+    cursor.execute(sql_sp)
+    t1 = time.time()
+    print '-----Finished:', time.strftime('%H:%M:%S')
+    print 'Time used: ', t1 - t0
+    step += 1
+
     for sp, tbl in tbl_dict.items():
         tmp_tbl = tbl[0]
         new_tbl = tbl[1]
@@ -55,15 +78,18 @@ def run():
         print "Step {}. Replace table {} to {}".format(step, tmp_tbl, new_tbl)
         t0 = time.time()
         print '-----Started:', time.strftime('%H:%M:%S')
-        sql_sp = "{call "+schema+"."+sp_replace+"('"+tmp_tbl+"','"+new_tbl+"','"+schema+"','"+schema+"')};"
+        sql_sp = "{call " + schema + "." + sp_replace + "('" + tmp_tbl + "','" + new_tbl + "','" + schema + "','" + schema + "')};"
         # print sql_sp
         cursor.execute(sql_sp)
         t1 = time.time()
         print '-----Finished:', time.strftime('%H:%M:%S')
         print 'Time used: ', t1 - t0
         step += 1
+
     t_end = time.time()
 
-    print "Total pipeline time:",  time.strftime('%H:%M:%S', time.gmtime(t_end - t_begin))
+    print "Total pipeline time:", time.strftime('%H:%M:%S', time.gmtime(t_end - t_begin))
+
+
 if __name__ == '__main__':
     run()

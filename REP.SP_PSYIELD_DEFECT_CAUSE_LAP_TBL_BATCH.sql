@@ -16,16 +16,16 @@ BEGIN_PROC
 			pTableSchema := 'REP';
 			pBatchDefectLapView := '
 				SELECT 
-						M.SITE_CODE, 
+						M.SITE_CODE AS M_LH_SITE_CODE, 
 						M.M_LH_OLD_OPERATION_NAME, 
 						M.M_LH_OPERATION_DATE, 
 						M.M_LH_OPERATION_YEAR, 
 						M.M_LH_OPERATION_QUARTER, 
 						M.M_LH_OPERATION_WEEK, 
-						M.M_LH_OLD_PROGRAM_NAME, 
+						M.M_LH_OLD_PROGRAM_NAME AS M_LH_OLD_PRODUCT_SK_ID_PROGRAM, 
 						M.DEFECT_CODE, 
-						M.DEFECT_QUANTITY, 
-						M.LOT_ID,
+						M.DEFECT_QUANTITY AS M_DL_DEFECT_QTY, 
+						M.LOT_ID AS M_LH_LOT_ID,
 						PARAM_LAP_HEADER.SOURCE_SYSTEM_CODE AS SOURCE_SYSTEM_CODE, 
 						PARAM_LAP_HEADER.LAP_FLAG AS LAP_ROUGH_FINAL_FLAG, 
 						PARAM_LAP_HEADER.WAFER_BAR_NUMBER AS LAP_REAL_BAR_NO,
@@ -184,7 +184,7 @@ BEGIN_PROC
 				RAISE NOTICE 'Table %.% exist, deleted.', pTableSchema, pTableName;
 			END IF;
 			
-			EXECUTE IMMEDIATE 'CREATE TABLE '|| pTableSchema || '.'||pTableName ||' AS SELECT * FROM ( ' || pBatchDefectLapView || ' ) t DISTRIBUTE ON (SITE_CODE , M_LH_OLD_PROGRAM_NAME)';
+			EXECUTE IMMEDIATE 'CREATE TABLE '|| pTableSchema || '.'||pTableName ||' AS SELECT * FROM ( ' || pBatchDefectLapView || ' ) t DISTRIBUTE ON (M_LH_SITE_CODE , M_LH_OLD_PRODUCT_SK_ID_PROGRAM)';
 			RAISE NOTICE 'create Table %.%', pTableSchema, pTableName;
 		
 		END;

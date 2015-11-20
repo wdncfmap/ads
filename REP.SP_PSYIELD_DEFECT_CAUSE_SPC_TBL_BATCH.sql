@@ -17,7 +17,6 @@ BEGIN
 								SELECT 
 									OST.OPERATION_DESCRIPTION,
 									WS.SITE_CODE AS M_LH_SITE_CODE,
-									WS.SITE_CODE,
 									WS.M_LASL_WAFER_SECTION_ID,
 									WS.M_LH_OLD_OPERATION_NAME,
 									WS.M_LH_OPERATION_DATE,
@@ -25,11 +24,10 @@ BEGIN
 									WS.M_LH_OPERATION_QUARTER,
 									WS.M_LH_OPERATION_WEEK,
 									WS.PROGRAM,
-									WS.PROGRAM AS M_LH_OLD_PROGRAM_NAME,
 									WS.DEFECT_CODE,
 									WS.M_DL_DEFECT_QTY,
-									MES.PROCESS_TOOL_NAME,
-									MES.TEST_DATE_TIME,
+									MES.PROCESS_TOOL_NAME AS SPC_M_PROCESS_TOOL,
+									MES.TEST_DATE_TIME AS SPC_M_TEST_DATE_TIME,
 									RECIPE.TAG_VALUE AS SPC_RECIPE_VALUE,
 									RUNNO.TAG_VALUE AS SPC_RUNNO_VALUE,
 									START_TIME.TAG_VALUE AS SPC_START_TIME_VALUE,
@@ -98,7 +96,7 @@ BEGIN
 			RAISE NOTICE 'Table %.% exist, deleted.', pTableSchema, pTableName;
 		END IF;
 		
-		EXECUTE IMMEDIATE 'CREATE TABLE '|| pTableSchema || '.'||pTableName ||' AS SELECT * FROM ( ' || pBatchDefectSpcView || ' ) t DISTRIBUTE ON (SITE_CODE , M_LH_OLD_PROGRAM_NAME)';
+		EXECUTE IMMEDIATE 'CREATE TABLE '|| pTableSchema || '.'||pTableName ||' AS SELECT * FROM ( ' || pBatchDefectSpcView || ' ) t DISTRIBUTE ON (M_LH_SITE_CODE , PROGRAM)';
 		RAISE NOTICE 'create Table %.%', pTableSchema, pTableName;
 		
 	END;
